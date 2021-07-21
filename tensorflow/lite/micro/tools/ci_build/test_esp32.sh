@@ -26,34 +26,42 @@ pwd
 source tensorflow/lite/micro/tools/ci_build/helper_functions.sh
 
 TARGET=esp
+TARGET_ARCH=xtensa-esp32
 
+# TODO need to find out how to run this script from within the espressif/idf:v4.3 docker container
 # setup esp-idf and toolchains
-echo "Checking out esp-idf..."
-readable_run git clone --recursive --single-branch --branch release/v4.2 https://github.com/espressif/esp-idf.git
-export IDF_PATH="${ROOT_DIR}"/esp-idf
-cd $IDF_PATH
-readable_run ./install.sh
-readable_run . ./export.sh
-cd "${ROOT_DIR}"
+#echo "Checking out esp-idf..."
+#readable_run git clone --recursive --single-branch --branch release/v4.2 https://github.com/espressif/esp-idf.git
+#export IDF_PATH="${ROOT_DIR}"/esp-idf
+#cd $IDF_PATH
+#readable_run ./install.sh
+#readable_run . ./export.sh
+#cd "${ROOT_DIR}"
+
+readable_run make -f tensorflow/lite/micro/tools/make/Makefile TARGET=${TARGET} TARGET_ARCH=${TARGET_ARCH} third_party_downloads
 
 # clean all
 readable_run make -f tensorflow/lite/micro/tools/make/Makefile clean
 
 # generate examples
-readable_run make -j8 -f tensorflow/lite/micro/tools/make/Makefile TARGET=${TARGET} generate_hello_world_esp_project
-readable_run make -j8 -f tensorflow/lite/micro/tools/make/Makefile TARGET=${TARGET} generate_person_detection_esp_project
-readable_run make -j8 -f tensorflow/lite/micro/tools/make/Makefile TARGET=${TARGET} generate_micro_speech_esp_project
+readable_run make -j8 -f tensorflow/lite/micro/tools/make/Makefile TARGET=${TARGET} TARGET_ARCH=${TARGET_ARCH} generate_hello_worl
+d_esp_project
+#readable_run make -j8 -f tensorflow/lite/micro/tools/make/Makefile TARGET=${TARGET} generate_person_detection_esp_project
+readable_run make -j8 -f tensorflow/lite/micro/tools/make/Makefile TARGET=${TARGET} TARGET_ARCH=${TARGET_ARCH} generate_micro_spee
+ch_esp_project
 
 # build examples
-cd "${ROOT_DIR}"/tensorflow/lite/micro/tools/make/gen/esp_xtensa-esp32/prj/hello_world/esp-idf
+cd "${ROOT_DIR}"/tensorflow/lite/micro/tools/make/gen/esp_xtensa-esp32_default/prj/hello_world/esp-idf
 readable_run idf.py build
 
-cd "${ROOT_DIR}"/tensorflow/lite/micro/tools/make/gen/esp_xtensa-esp32/prj/person_detection/esp-idf
-readable_run git clone https://github.com/espressif/esp32-camera.git components/esp32-camera
-cd components/esp32-camera/
-readable_run git checkout eacd640b8d379883bff1251a1005ebf3cf1ed95c
-cd ../../
+#cd "${ROOT_DIR}"/tensorflow/lite/micro/tools/make/gen/esp_xtensa-esp32/prj/person_detection/esp-idf
+#readable_run git clone https://github.com/espressif/esp32-camera.git components/esp32-camera
+#cd components/esp32-camera/
+#readable_run git checkout eacd640b8d379883bff1251a1005ebf3cf1ed95c
+#cd ../../
+#readable_run idf.py build
+
+cd "${ROOT_DIR}"/tensorflow/lite/micro/tools/make/gen/esp_xtensa-esp32_default/prj/micro_speech/esp-idf
 readable_run idf.py build
 
-cd "${ROOT_DIR}"/tensorflow/lite/micro/tools/make/gen/esp_xtensa-esp32/prj/micro_speech/esp-idf
-readable_run idf.py build
+{code}
