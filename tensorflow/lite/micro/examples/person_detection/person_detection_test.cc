@@ -102,7 +102,9 @@ TF_LITE_MICRO_TEST(TestInvoke) {
   TF_LITE_MICRO_EXPECT_GT(person_score, no_person_score);
 
   // TODO(b/161461076): Update model to make this work on real negative inputs.
-  memset(input->data.int8, 0, input->bytes);
+  // Copy an image with a person into the memory area used for the input.
+  TFLITE_DCHECK_EQ(input->bytes, static_cast<size_t>(g_no_person_data_size));
+  memcpy(input->data.int8, g_no_person_data, input->bytes);
 
   // Run the model on this "No Person" input.
   invoke_status = interpreter.Invoke();
