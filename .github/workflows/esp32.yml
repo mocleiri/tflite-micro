@@ -10,13 +10,14 @@ on:
   # Allow manually triggering of the workflow.
   workflow_dispatch: {}
 
+  push:
 jobs:
   esp32_daily:
     runs-on: ubuntu-latest
 
-    if: |
-      github.event_name == 'workflow_dispatch' ||
-      (github.event_name == 'schedule' && github.repository == 'tensorflow/tflite-micro')
+    #    if: |
+    #  github.event_name == 'workflow_dispatch' ||
+    # (github.event_name == 'schedule' && github.repository == 'tensorflow/tflite-micro')
 
     name: ESP32 Continuous Builds
     steps:
