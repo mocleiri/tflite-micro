@@ -27,10 +27,10 @@ namespace tflite {
 // The examples directory has sample code for this.
 class AllOpsResolver : public MicroMutableOpResolver<128> {
  public:
+  TF_LITE_REMOVE_VIRTUAL_DELETE
+
   AllOpsResolver();
 
- private:
-  TF_LITE_REMOVE_VIRTUAL_DELETE
 };
 
 }  // namespace tflite
