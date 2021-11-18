@@ -87,3 +87,33 @@ PATH=${PATH}:${ROOT_DIR}/tensorflow/lite/micro/tools/make/downloads/gcc_embedded
 popd > /dev/null
 
 #rm -rf ${TEST_OUTPUT_DIR_CMSIS}
+
+# Test that C++ files are renamed to .cpp
+rm -rf ${TEST_OUTPUT_DIR_CMSIS}
+
+# Remove existing state prior to testing project generation for cortex-m target.
+# make -f tensorflow/lite/micro/tools/make/Makefile clean clean_downloads
+
+TEST_OUTPUT_DIR_CMSIS=$(mktemp -d)
+
+readable_run \
+  python3 tensorflow/lite/micro/tools/project_generation/create_tflm_tree.py \
+  --makefile_options="TARGET=cortex_m_generic OPTIMIZED_KERNEL_DIR=cmsis_nn TARGET_ARCH=project_generation" \
+  --rename-cc-to-cpp \
+  ${TEST_OUTPUT_DIR_CMSIS} \
+  ${EXAMPLES}
+
+CC_FILES=$(find ${TEST_OUTPUT_DIR_CMSIS} -name "*.cc" | head)
+CPP_FILES=$(find ${TEST_OUTPUT_DIR_CMSIS} -name "*.cpp" | head)
+
+# echo "CC_FILE='$CC_FILES', CPP_FILE='$CPP_FILES'"
+
+if test -n "$CC_FILES"; then
+  echo "Expected no .cc file to exist"
+  exit 1;
+fi
+
+if test -z "$CPP_FILES"; then
+  echo "Expected a .cpp file to exist"
+  exit 1;
+fi
